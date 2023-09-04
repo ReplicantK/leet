@@ -1,33 +1,47 @@
 #include <iostream>
 #include <vector>
+#include <limits.h>
+#include <unordered_map>
 
 using namespace std;
 
-vector<int> twoSum(vector<int>& nums, int target) {
-  vector<int> results;
+int main() {
+  // test cases
+  int target = 9;
+  vector<int> nums = {2, 7, 11, 15};
+
+  //int target = 6;
+  //vector<int> nums = {3, 2, 4};
+
+  //int target = 6;
+  //vector<int> nums = {3, 3};
+
+  // solution
+  unordered_map<int, int> mp;
 
   for (int i = 0; i < nums.size(); i++) {
-    for (int j = i + 1; j < nums.size(); j++) {
-      if ((nums.at(i) + nums.at(j)) == target) {
-        results.push_back(i);
-        results.push_back(j);
-      }
+    mp.insert({nums.at(i), i});
+  }
+
+  int needed = INT_MAX;
+  for (int i = 0; i < nums.size(); i++) {
+    needed = target - nums.at(i);
+    if (!mp.contains(needed)) {
+      continue;
+    }
+
+    if (mp[needed] != i) {
+      nums.clear();
+      nums.push_back(i);
+      nums.push_back(mp[needed]);
+      break;
     }
   }
 
-  return results;
-}
-
-int main() {
-  int target = 9;
-  vector<int> nums;
-
-  nums.push_back(2);
-  nums.push_back(7);
-  nums.push_back(11);
-  nums.push_back(15);
-
-  vector<int> test = twoSum(nums, target);
+  // simply printing out the answer
+  for (int i : nums) {
+    cout << i << endl;
+  }
 
   return 0;
 }
