@@ -3,8 +3,6 @@
 This repository contains a collection of my solutions to LeetCode-style coding questions.
 The problems I have solved are sourced from platforms such as LeetCode, Codeforces, and other similar websites.
 
----
-
 ## Project Structure
 
 This repository follows a simple structure:
