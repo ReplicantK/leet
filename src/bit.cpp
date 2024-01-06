@@ -14,9 +14,9 @@ int main() {
   for (int i = 0; i < lines; i++) {
     cin >> temp;
 
-    if (temp.at(0) == + || temp.at(2) == +) {
+    if (temp.at(0) == '+' || temp.at(2) == '+') {
       total++;
-    } else if (temp.at(0) == - || temp.at(2) == -) {
+    } else if (temp.at(0) == '-' || temp.at(2) == '-') {
       total--;
     }
   }
