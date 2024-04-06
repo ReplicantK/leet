@@ -1,46 +1,32 @@
 #include <iostream>
-#include <queue>
 #include <vector>
 #include <cassert>
-#include <unordered_map>
 
 using namespace std;
 
 int longestConsecutive(vector<int>& nums) {
-  if (nums.size() == 0) {
+  if (nums.empty()) {
     return 0;
   }
 
-  priority_queue<int, vector<int>, greater<int>> q;
-  unordered_map<int, bool> mp;
+  sort(nums.begin(), nums.end());
 
-  for (auto num : nums) {
-    if (!mp[num]) {
-      q.push(num);
-      mp[num] = true;
-    }
-  }
+  int counter = 1, max = 1, last = nums[0];
 
-  int max = 0, counter = 1, last = q.top();
-  q.pop();
-
-  while (!q.empty()) {
-    if (last + 1 == q.top()) {
+  for (int i = 1; i < nums.size(); i++) {
+    if (last == nums[i]) {
+      continue;
+    } else if (nums[i] - 1 == last) {
       counter++;
     } else {
-      if (counter > max) {
-        max = counter;
-      }
-
       counter = 1;
     }
 
-    last = q.top();
-    q.pop();
-  }
+    if (counter > max) {
+      max = counter;
+    }
 
-  if (counter > max) {
-    max = counter;
+    last = nums[i];
   }
 
   return max;
@@ -58,6 +44,9 @@ int main() {
 
   nums = {9, 1, 4, 7, 3, -1, 0, 5, 8, -1, 6};
   assert(longestConsecutive(nums) == 7);
+
+  nums = {1};
+  assert(longestConsecutive(nums) == 1);
 
   cout << "All tests passed." << endl;
 
