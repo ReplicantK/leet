@@ -15,10 +15,6 @@ struct TreeNode {
 
 // solution starts here
 bool isSameTree(TreeNode* p, TreeNode* q) {
-  if (p == nullptr && q == nullptr) {
-    return true;
-  }
-
   deque<TreeNode*> qp;
   deque<TreeNode*> qq;
 
@@ -41,15 +37,13 @@ bool isSameTree(TreeNode* p, TreeNode* q) {
       return false;
     }
 
-    if ((a->left == nullptr && a->right == nullptr) && (b->left == nullptr && b->right == nullptr)) {
-      continue;
+    if ((a->left != nullptr || a->right != nullptr) || (b->left != nullptr || b->right != nullptr)) {
+      qp.push_back(a->left);
+      qp.push_back(a->right);
+
+      qq.push_back(b->left);
+      qq.push_back(b->right);
     }
-
-    qp.push_back(a->left);
-    qp.push_back(a->right);
-
-    qq.push_back(b->left);
-    qq.push_back(b->right);
   }
 
   return true;
