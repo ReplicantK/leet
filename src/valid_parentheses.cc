@@ -1,61 +1,56 @@
 #include <iostream>
 #include <string>
-#include <vector>
+#include <stack>
 
-using namespace std;
+bool is_valid(std::string s) {
+  std::stack<char> st;
 
-bool is_valid(string s) {
-  bool valid = true;
-  vector<char> save;
-
-  for (int i = 0; i < s.length(); i++) {
-    if ((s.at(i) == '{') || (s.at(i) == '(') || (s.at(i) == '[')) {
-      save.push_back(s.at(i));
-    } else if (((s.at(i) == '}') || (s.at(i) == ')') || (s.at(i) == ']')) && s.length() > 1 && i != 0 && save.size() != 0) {
-      if (save.at(save.size() - 1) == '{') {
-        if (s.at(i) != '}') {
-          valid = false;
-        } else {
-          save.pop_back();
-        }
-      } else if (save.at(save.size() - 1) == '(') {
-        if (s.at(i) != ')') {
-          valid = false;
-        } else {
-          save.pop_back();
-        }
-      } else if (save.at(save.size() - 1) == '[') {
-        if (s.at(i) != ']') {
-          valid = false;
-        } else {
-          save.pop_back();
-        }
-      } else {
-        valid = false;
-      }
+  for (char i : s) {
+    if (i == '(' || i == '{' || i == '[') {
+      st.push(i);
+      continue;
     }
+
+    if (st.empty()) {
+      return false;
+    } else if (i == ']' && st.top() != '[') {
+      return false;
+    } else if (i == '}' && st.top() != '{') {
+      return false;
+    } else if (i == ')' && st.top() != '(') {
+      return false;
+    } 
+
+    st.pop();
   }
 
-  if ((s.length() < 2) || (save.size() != 0)) {
-    valid = false;
+  if (!st.empty()) {
+    return false;
   }
 
-  return valid;
+  return true;
 }
 
 int main() {
-  //string s = "";
-  //string s = "[";
-  //string s = "]";
-  //string s = "((";
-  //string s = "()";
-  //string s = "()[]{}";
-  //string s = "(]";
-  //string s = "{[]}";
-  //string s = "{[](}}";
-  string s = "(){()}}{";
+  std::string s1 = "[";
+  std::string s2 = "]";
+  std::string s3 = "((";
+  std::string s4 = "()";
+  std::string s5 = "()[]{}";
+  std::string s6 = "(]";
+  std::string s7 = "{[]}";
+  std::string s8 = "{[](}}";
+  std::string s9 = "(){()}}{";
 
-  cout << is_valid(s) << endl;
+  std::cout << "case 1 got: " << is_valid(s1) << ", expected: 0\n";
+  std::cout << "case 2 got: " << is_valid(s2) << ", expected: 0\n";
+  std::cout << "case 3 got: " << is_valid(s3) << ", expected: 0\n";
+  std::cout << "case 4 got: " << is_valid(s4) << ", expected: 1\n";
+  std::cout << "case 5 got: " << is_valid(s5) << ", expected: 1\n";
+  std::cout << "case 6 got: " << is_valid(s6) << ", expected: 0\n";
+  std::cout << "case 7 got: " << is_valid(s7) << ", expected: 1\n";
+  std::cout << "case 8 got: " << is_valid(s8) << ", expected: 0\n";
+  std::cout << "case 9 got: " << is_valid(s9) << ", expected: 0" << std::endl;
 
   return 0;
 }
