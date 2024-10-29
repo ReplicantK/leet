@@ -1,70 +1,64 @@
 #include <iostream>
-#include <vector>
-
-using namespace std;
+#include <list>
 
 class MinStack {
   private:
-    vector<int> vec;
-    int min = INT_MAX;
+    std::list<int> st;
+    std::list<int> minSt;
 
   public:
     MinStack() {
-
     }
 
     void push(int val) {
-      if (val < min) {
-        min = val;
+      if (minSt.empty() || val <= minSt.back()) {
+        minSt.push_back(val);
       }
 
-      vec.push_back(val);
+      st.push_back(val);
     }
 
     void pop() {
-      int popped = vec.at(vec.size() - 1);
-      vec.pop_back();
+      if (st.back() == minSt.back()) {
+        minSt.pop_back();
+      }
 
-      if (popped == min) {
-        min = INT_MAX;
-        for (int i = 0; i < vec.size(); i++) {
-          if (vec.at(i) < min) {
-            min = vec.at(i);
-          }
-        }
-      } 
+      st.pop_back();
     }
 
     int top() {
-      return vec.at(vec.size() - 1);
+      return st.back();
     }
 
     int getMin() {
-      return min;
-    }
-
-    void test() {
-      for (auto it = vec.begin(); it != vec.end(); it++) {
-        cout << *it << " ";
-      }
-
-      cout << endl;
+      return minSt.back();
     }
 };
 
 int main() {
-  MinStack* minStack = new MinStack();
+  MinStack case1;
+  std::cout << "CASE 1\n";
+  case1.push(-2);
+  case1.push(0);
+  case1.push(-3);
+  std::cout << "getMin(): got " << case1.getMin() << ", expected -3\n";
+  case1.pop();
+  std::cout << "top()   : got " << case1.top() << ", expected 0\n";
+  std::cout << "getMin(): got " <<  case1.getMin() << ", expected -2\n";
 
-  // test case
-  minStack->push(5);
-  minStack->push(3);
-  minStack->push(4);
-
-  cout << minStack->getMin() << endl;
-  minStack->pop();
-  minStack->pop();
-  cout << minStack->top() << endl;
-  cout << minStack->getMin() << endl;
+  MinStack case2;
+  std::cout << "\nCASE 2\n";
+  case2.push(2);
+  case2.push(0);
+  case2.push(3);
+  case2.push(0);
+  std::cout << "getMin(): got " << case2.getMin() << ", expected 0\n";
+  case2.pop();
+  std::cout << "getMin(): got " << case2.getMin() << ", expected 0\n";
+  case2.pop();
+  std::cout << "getMin(): got " << case2.getMin() << ", expected 0\n";
+  case2.pop();
+  std::cout << "getMin(): got " << case2.getMin() << ", expected 2" << std::endl;;
 
   return 0;
 }
