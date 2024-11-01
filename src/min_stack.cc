@@ -58,7 +58,7 @@ int main() {
   case2.pop();
   std::cout << "getMin(): got " << case2.getMin() << ", expected 0\n";
   case2.pop();
-  std::cout << "getMin(): got " << case2.getMin() << ", expected 2" << std::endl;;
+  std::cout << "getMin(): got " << case2.getMin() << ", expected 2" << std::endl;
 
   return 0;
 }
