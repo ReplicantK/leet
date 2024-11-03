@@ -1,64 +1,41 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
+int search(const std::vector<int>& nums, int target) {
+  int l = 0;
+  int m = 0;
+  int r = nums.size();
 
-int search(vector<int>& nums, int target) {
-  int low = 0;
-  int mid = 0;
-  int high = nums.size() - 1;
-  int found = -1;
+  while (l < r) {
+    m = (l + r) / 2;
 
-  while (low <= high) {
-    mid = (low + high) / 2;
-
-    if (nums.at(mid) < target) {
-      low = mid + 1;
-    } else if (nums.at(mid) > target) {
-      high = mid - 1;
+    if (nums[m] == target) {
+      return m;
+    } else if (nums[m] < target) {
+      l = m + 1;
     } else {
-      found = mid;
-      break;
+      r = m;
     }
   }
-
-  return found;
+  
+  return -1;
 }
 
 int main() {
+  std::cout << "CASE 1\n" << search({-1, 0, 3, 5, 9, 12}, 9) << " :got\n";
+  std::cout << "4 :expected\n\n";
 
-  // example 1
-  vector<int> nums1;
-  nums1.push_back(-1);
-  nums1.push_back(0);
-  nums1.push_back(3);
-  nums1.push_back(5);
-  nums1.push_back(9);
-  nums1.push_back(12);
-  int target1 = 9;
+  std::cout << "CASE 2\n" << search({-1, 0, 3, 5, 9, 12}, 2) << " :got\n";
+  std::cout << "-1 :expected\n\n";
 
-  // example 2
-  int target2 = 2;
+  std::cout << "CASE 3\n" << search({5}, 5) << " :got\n";
+  std::cout << "0 :expected\n\n";
 
-  // example 3
-  vector<int> nums3;
-  nums3.push_back(5);
-  int target3 = 5;
+  std::cout << "CASE 4\n" << search({5}, -5) << " :got\n";
+  std::cout << "-1 :expected\n\n";
 
-  // example 4
-  int target4 = -5;
-
-  // example 5
-  vector<int> nums4;
-  nums4.push_back(2);
-  nums4.push_back(5);
-  int target5 = 5;
-
- cout << search(nums1, target1) << "\n";
- cout << search(nums1, target2) << "\n";
- cout << search(nums3, target3) << "\n";
- cout << search(nums3, target4) << "\n";
- cout << search(nums4, target5) << endl;
+  std::cout << "CASE 5\n" << search({2, 5}, 5) << " :got\n";
+  std::cout << "1 :expected" << std::endl;
 
   return 0;
 }
