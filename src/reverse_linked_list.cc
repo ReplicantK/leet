@@ -1,8 +1,4 @@
 #include <iostream>
-#include <stack>
-#include <vector>
-
-using namespace std;
 
 struct ListNode {
   int val;
@@ -12,42 +8,65 @@ struct ListNode {
   ListNode(int x, ListNode* next) : val(x), next(next) {}
 };
 
-int main() {
-  // this is the first test case declaration
-  ListNode* head = new ListNode(1);
-  ListNode* head1 = new ListNode(2);
-  ListNode* head2 = new ListNode(3);
-  ListNode* head3 = new ListNode(4);
-  ListNode* head4 = new ListNode(5);
+ListNode* reverseList(ListNode* head) {
+  if (head == nullptr || head->next == nullptr) {
+    return head;
+  }
 
-  head->next = head1;
-  head1->next = head2;
-  head2->next = head3;
-  head3->next = head4;
+  ListNode* previous = head;
+  ListNode* current = head->next;
+  ListNode* newHead = current;
 
-  // solution
-  vector<ListNode*> vector;
+  previous->next = nullptr;
 
-  while (head != NULL) {
-    vector.push_back(head);
+  while (current != nullptr) {
+    ListNode* temp = current->next;
+    current->next = previous;
+    previous = current;
+    newHead = current;
+    current = temp;
+  }
+
+  return newHead;
+}
+
+void listPrinter(ListNode* head) {
+  if (head == nullptr) {
+    std::cout << "[]";
+    return;
+  }
+
+  std::cout << "[";
+  while (head->next != nullptr) {
+    std::cout << head->val << ",";
     head = head->next;
   }
+  std::cout << head->val << "]";
+}
 
-  ListNode* inverted = vector.at(vector.size() - 1);
-  while (!vector.empty()) {
-    if (vector.size() == 1) {
-      vector.at(vector.size() - 1)->next = NULL;
-    } else {
-      vector.at(vector.size() - 1)->next = vector.at(vector.size() - 2);
-    }
+int main() {
+  ListNode* headCase1 = new ListNode(
+    1, new ListNode(2, new ListNode(3, new ListNode (4, new ListNode(5))))
+  );
+  ListNode* headCase2 = new ListNode(1, new ListNode(2));
+  ListNode* headCase3 = nullptr;
+  ListNode* headCase4 = new ListNode(1);
 
-    vector.pop_back();
-  }
+  std::cout << "CASE1\n";
+  listPrinter(reverseList(headCase1));
+  std::cout << " :got\n[5,4,3,2,1] :expected\n\n";
 
-  while (inverted != NULL) {
-    cout << inverted->val << endl;
-    inverted = inverted->next;
-  }
+  std::cout << "CASE2\n";
+  listPrinter(reverseList(headCase2));
+  std::cout << " :got\n[2,1] :expected\n\n";
+
+  std::cout << "CASE3\n";
+  listPrinter(reverseList(headCase3));
+  std::cout << " :got\n[] :expected\n\n";
+
+  std::cout << "CASE4\n";
+  listPrinter(reverseList(headCase4));
+  std::cout << " :got\n[1] :expected" << std::endl;
 
   return 0;
 }
