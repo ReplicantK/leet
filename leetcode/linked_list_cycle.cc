@@ -1,47 +1,184 @@
 #include <iostream>
 #include <vector>
-#include <set>
-#include <map>
-
-using namespace std;
 
 struct ListNode {
   int val;
   ListNode *next;
-  ListNode(int x) : val(x), next(NULL) {}
+  ListNode() : val(0), next(nullptr) {}
+  ListNode(int x) : val(x), next(nullptr) {}
+  ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
-int main() {
-  // test case
-  ListNode* index0 = new ListNode(3);
-  ListNode* index1 = new ListNode(2);
-  ListNode* index2 = new ListNode(0);
-  ListNode* index3 = new ListNode(-4);
+bool hasCycle(ListNode* head) {
+  ListNode* slow = head;
+  ListNode* fast = head;
 
-  index0->next = index1;
-  index1->next = index2;
-  index2->next = index3;
-  index3->next = index1;
+  while (fast && fast->next) {
+    slow = slow->next;
+    fast = fast->next->next;
 
-  set<int> set;
-  ListNode* current = index0;
-  bool found = false;
-
-  if (index1 == NULL) {
-    cout << found << endl;
-    return 0;
-  }
-
-  while (current->next != NULL) {
-    if (set.contains(current->val)) {
-      found = true;
-      break;
+    if (slow == fast) {
+      return true;
     }
+  }
+  
+  return false;
+}
 
-    set.insert(current->val);
-    current = current->next;
+int main() {
+  // used to delete all allocated nodes at the end
+  std::vector<ListNode*> v;
+
+  // case 1
+  ListNode* list = new ListNode(3);
+  v.push_back(list);
+
+  ListNode* temp = new ListNode(2);
+  v.push_back(temp);
+  list->next = temp;
+
+  temp = new ListNode(0);
+  v.push_back(temp);
+  list->next->next = temp;
+
+  temp = new ListNode(-4);
+  v.push_back(temp);
+  list->next->next->next = temp;
+
+  list->next->next->next->next = list->next;
+
+  std::cout << "CASE1\n";
+  std::cout << "Expected: true\n";
+  std::cout << "Received: ";
+
+  if (hasCycle(list)) {
+    std::cout << "true\n\n";
+  } else {
+    std::cout << "false\n\n";
   }
 
-  cout << found << endl;
+  // case 2
+  list = new ListNode(1);
+  v.push_back(list);
+
+  temp = new ListNode(2);
+  v.push_back(temp);
+  list->next = temp;
+
+  list->next->next = list;
+
+  std::cout << "CASE2\n";
+  std::cout << "Expected: true\n";
+  std::cout << "Received: ";
+
+  if (hasCycle(list)) {
+    std::cout << "true\n\n";
+  } else {
+    std::cout << "false\n\n";
+  }
+
+  // case 3
+  list = new ListNode(1);
+  v.push_back(list);
+
+  std::cout << "CASE3\n";
+  std::cout << "Expected: false\n";
+  std::cout << "Received: ";
+
+  if (hasCycle(list)) {
+    std::cout << "true\n\n";
+  } else {
+    std::cout << "false\n\n";
+  }
+
+  // case 4
+  list = nullptr;
+
+  std::cout << "CASE4\n";
+  std::cout << "Expected: false\n";
+  std::cout << "Received: ";
+
+  if (hasCycle(list)) {
+    std::cout << "true\n\n";
+  } else {
+    std::cout << "false\n\n";
+  }
+
+  // case 5
+  list = new ListNode(-1);
+  v.push_back(list);
+
+  temp = new ListNode(-7);
+  v.push_back(temp);
+  list->next = temp;
+
+  temp = new ListNode(7);
+  v.push_back(temp);
+  list->next->next = temp;
+
+  temp = new ListNode(-4);
+  v.push_back(temp);
+  list->next->next->next = temp;
+
+  temp = new ListNode(19);
+  v.push_back(temp);
+  list->next->next->next->next = temp;
+
+  temp = new ListNode(6);
+  v.push_back(temp);
+  list->next->next->next->next->next = temp;
+
+  temp = new ListNode(-9);
+  v.push_back(temp);
+  list->next->next->next->next->next->next = temp;
+
+  temp = new ListNode(-5);
+  v.push_back(temp);
+  list->next->next->next->next->next->next->next = temp;
+
+  temp = new ListNode(-2);
+  v.push_back(temp);
+  list->next->next->next->next->next->next->next->next = temp;
+
+  temp = new ListNode(-5);
+  v.push_back(temp);
+  list->next->next->next->next->next->next->next->next->next = temp;
+
+  list->next->next->next->next->next->next = list->next->next->next->next;
+
+  std::cout << "CASE5\n";
+  std::cout << "Expected: true\n";
+  std::cout << "Received: ";
+
+  if (hasCycle(list)) {
+    std::cout << "true\n\n";
+  } else {
+    std::cout << "false\n\n";
+  }
+
+  // case 6
+  list = new ListNode(1);
+  v.push_back(list);
+
+  temp = new ListNode(2);
+  v.push_back(temp);
+
+  list->next = temp;
+
+  std::cout << "CASE6\n";
+  std::cout << "Expected: false\n";
+  std::cout << "Received: ";
+
+  if (hasCycle(list)) {
+    std::cout << "true" << std::endl;
+  } else {
+    std::cout << "false" << std::endl;
+  }
+
+  // unallocated all the memory used by the nodes
+  for (ListNode* i : v) {
+    delete(i);
+  }
+
   return 0;
 }
