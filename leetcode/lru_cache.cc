@@ -1,193 +1,77 @@
 #include <iostream>
+#include <utility>
 #include <unordered_map>
-
-using namespace std;
-
-class Node {
-  private:
-    int val = INT_MAX;
-    Node* next = NULL;
-    Node* prev = NULL;
-
-  public:
-    // constructor
-    Node(int val) {
-      this->val = val;
-    }
-
-    // setter and getter for value in list node
-    int getVal() {
-      return val;
-    }
-
-    void setVal(int val) {
-      this->val = val;
-    }
-
-    // setter and getter for next pointer in list node
-    Node* getNext() {
-      return next;
-    }
-
-    void setNext(Node* next) {
-      this->next = next;
-    }
-
-    // setter and getter for prev pointer in list node
-    Node* getPrev() {
-      return prev;
-    }
-
-    void setPrev(Node* prev) {
-      this->prev = prev;
-    }
-};
+#include <list>
 
 class LRUCache {
   private:
-    unordered_map<int, Node*> map;
-    unordered_map<Node*, int> map2;
-    int capacity = 0;
-    int currentSize = 0;
-    Node* tail = NULL;
-    Node* head = NULL;
+    std::list<std::pair<int, int>> l;
+    std::unordered_map<int, std::list<std::pair<int, int>>::iterator> keyValue;
+    int cap = 0;
 
   public:
     LRUCache(int capacity) {
-      this->capacity = capacity;
+      cap = capacity;
     }
-
+    
     int get(int key) {
-      Node* value = NULL;
-
-      if (!map.contains(key)) {
+      if (!keyValue.contains(key)) {
         return -1;
-      } else {
-        value = map[key];
       }
 
-      if (value != head) {
-        if (value == tail) {
-          tail = value->getNext();
-        } else {
-          value->getPrev()->setNext(value->getNext());
-        }
+      int value = keyValue[key]->first;
 
-        value->getNext()->setPrev(value->getPrev());
-        head->setNext(value);
-        value->setPrev(head);
-        head = value;
-        head->setNext(NULL);
-      }
+      l.erase(keyValue[key]);
+      l.push_back({value, key});
 
-      return value->getVal();
+      std::list<std::pair<int, int>>::iterator last = --l.end();
+      keyValue[key] = last;
+
+      return value;
     }
-
+    
     void put(int key, int value) {
-      if ((head == NULL) && (tail == NULL)) {
-        Node* newNode = new Node(value);
+      if (keyValue.contains(key)) {
+        l.erase(keyValue[key]);
+      } else if (l.size() == cap) {
+        std::list<std::pair<int, int>>::iterator first = l.begin();
+        keyValue.erase(first->second);
+        l.erase(first);
+      } 
 
-        head = newNode;
-        tail = newNode;
+      l.push_back({value, key});
 
-        tail->setNext(head);
-        head->setPrev(tail);
-
-        currentSize++;
-      } else if (map.contains(key)) {
-        Node* temp = map.at(key);
-
-        if (temp == tail) {
-          temp->getNext()->setPrev(NULL);
-
-          head->setNext(temp);
-          temp->setPrev(head);
-
-          tail = temp->getNext();
-          head = temp;
-          head->setNext(NULL);
-        } else if (temp != head) {
-          temp->getPrev()->setNext(temp->getNext());
-          temp->getNext()->setPrev(temp->getPrev());
-
-          head->setNext(temp);
-          temp->setPrev(head);
-          temp->setNext(NULL);
-
-          head = temp;
-        } 
-
-        head->setVal(value);
-
-      } else if (currentSize < capacity) {
-        Node* newNode = new Node(value);
-
-        newNode->setPrev(head);
-        head->setNext(newNode);
-        head = newNode;
-        tail->setPrev(NULL);
-
-        currentSize++;
-      } else {
-        Node* newNode = new Node(value);
-        Node* temp = tail;
-
-        if (capacity != 1) {
-          tail = tail->getNext();
-          tail->setPrev(NULL);
-
-          head->setNext(newNode);
-          newNode->setPrev(head);
-
-          head = newNode;
-
-        } else {
-          head = newNode;
-          tail = newNode;
-
-          tail->setNext(head);
-          head->setPrev(tail);
-        }
-
-        map.erase(map2.at(temp));
-        map2.erase(temp);
-
-        delete temp;
-      }
-
-      map.insert({key, head});
-      map2.insert({head, key});
-    }
-
-    void test() {
-      cout << head << endl;
-      cout << tail << endl;
-      //cout << "capacity " << capacity << " current size " << currentSize << endl;
-      //for (auto it = map.begin(); it != map.end(); it++) {
-      //  cout << "{" << it->first << ": " << it->second->getVal() << "}" << endl;
-      //}
-
-      //cout << endl;
-      //Node* test = tail;
-      //while (test != NULL) {
-      //  cout << test->getVal() << endl;
-      //  test = test->getNext();
-      //}
+      std::list<std::pair<int, int>>::iterator last = --l.end();
+      keyValue[key] = last;
     }
 };
 
 int main() {
-  LRUCache* obj = new LRUCache(1);
-  cout << obj->get(6) << endl;
-  cout << obj->get(8) << endl;
-  obj->put(12, 1);
-  cout << obj->get(2) << endl;
-  obj->put(15, 11);
-  obj->put(5, 2);
-  obj->put(1, 15);
-  obj->put(4, 2);
-  cout << obj->get(5) << endl;
-  obj->put(15, 15);
+  LRUCache* obj = nullptr;
+
+  // test case 1
+  std::cout << "CASE1\n";
+  obj = new LRUCache(2);
+  obj->put(1, 1);
+  obj->put(2, 2);
+  std::cout << "Expected: 1\n" << "Received: " << obj->get(1) << "\n\n";
+  obj->put(3, 3);
+  std::cout << "Expected: -1\n" << "Received: " << obj->get(2) << "\n\n";
+  obj->put(4, 4);
+  std::cout << "Expected: -1\n" << "Received: " << obj->get(1) << "\n\n";
+  std::cout << "Expected: 3\n" << "Received: " << obj->get(3) << "\n\n";
+  std::cout << "Expected: 4\n" << "Received: " << obj->get(4) << "\n\n";
+  delete(obj);
+
+  // test case 2
+  std::cout << "-------\n\nCASE2\n";
+  obj = new LRUCache(2);
+  obj->put(2, 6);
+  std::cout << "Expected: -1\n" << "Received: " << obj->get(1) << "\n\n";
+  obj->put(1, 5);
+  obj->put(1, 2);
+  std::cout << "Expected: 2\n" << "Received: " << obj->get(1) << "\n\n";
+  std::cout << "Expected: 6\n" << "Received: " << obj->get(2) << std::endl;
 
   return 0;
 }
