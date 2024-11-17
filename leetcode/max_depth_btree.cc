@@ -1,6 +1,6 @@
 #include <iostream>
-
-using namespace std;
+#include <stack>
+#include <utility>
 
 struct TreeNode {
   int val;
@@ -12,32 +12,74 @@ struct TreeNode {
   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
-int find_depth(TreeNode* node, int counter) {
-  if (node == nullptr) {
-    return counter;
+int maxDepth(TreeNode* root) {
+  int max = 0;
+  std::stack<std::pair<TreeNode*, int>> st;
+
+  if (root) {
+    st.push({root, 0});
   }
 
-  int left = find_depth(node->left, counter + 1);
-  int right = find_depth(node->right, counter + 1);
+  while (!st.empty()) {
+    std::pair<TreeNode*, int> current = st.top();
+    st.pop();
 
-  int max = left;
+    int add1 = current.second + 1;
 
-  if (right > max) {
-    max = right;
+    if (!current.first->left && !current.first->right && add1 > max) {
+      max = add1;
+      continue;
+    }
+
+    if (current.first->right) {
+      st.push({current.first->right, add1});
+    }
+
+    if (current.first->left) {
+      st.push({current.first->left, add1});
+    }
   }
 
   return max;
 }
 
+void deleteNodes(TreeNode* root) {
+  std::stack<TreeNode*> st;
+
+  if (root) {
+    st.push(root);
+  }
+
+  while (!st.empty()) {
+    TreeNode* current = st.top();
+    st.pop();
+
+    if (current->left) {
+      st.push(current->left);
+    }
+
+    if (current->right) {
+      st.push(current->right);
+    }
+
+    delete(current);
+  }
+}
+
 int main() {
-  // test case 1
-  TreeNode* root = new TreeNode(3, new TreeNode(9), new TreeNode(20, new TreeNode(15), new TreeNode(7)));
+  // case 1
+  TreeNode* root = new TreeNode(
+    3, new TreeNode(9), new TreeNode(20, new TreeNode(15), new TreeNode(7))
+  );
 
-  // test case 2
-  //TreeNode* root = new TreeNode(1);
-  //root->right = new TreeNode(2);
+  std::cout << "CASE1\nExpected: 3\nReceived: " << maxDepth(root) << "\n\n";
+  deleteNodes(root);
 
-  cout << find_depth(root, 0) << endl;
+  // case 2
+  root = new TreeNode(1, nullptr, new TreeNode(2));
+
+  std::cout << "CASE2\nExpected: 2\nReceived: " << maxDepth(root) << std::endl;
+  deleteNodes(root);
 
   return 0;
 }
