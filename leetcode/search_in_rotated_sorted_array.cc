@@ -6,18 +6,24 @@ int search(const std::vector<int>& nums, int target) {
   int r = nums.size() - 1;
 
   while (l <= r) {
-    int m = l + (r - l) / 2;
+    int mid = l + (r - l) / 2;
 
-    if (nums[m] == target) {
-      return m;
-    } else if (nums[r] >= target && nums[l] <= target && nums[m] > target) {
-      r = m - 1;
-    } else if (nums[r] >= target && nums[l] <= target && nums[m] < target) {
-      l = m + 1;
-    } else if (nums[r] < target) {
-      r--;
+    if (nums[mid] == target) {
+      return mid;
+    }
+
+    if (nums[r] >= target) {
+      if (nums[mid] < target || nums[mid] > nums[r]) {
+        l = mid + 1;
+      } else {
+        r = mid - 1;
+      }
     } else {
-      l++;
+      if (nums[mid] > target || nums[mid] < nums[l]) {
+        r = mid - 1;
+      } else {
+        l = mid + 1;
+      }
     }
   }
 
