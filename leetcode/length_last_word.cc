@@ -3,32 +3,18 @@
 #include <cctype>
 #include <iostream>
 
-using namespace std;
+int lengthOfLastWord(std::string s) {
+  int max = 0;
 
-int lengthOfLastWord(string s) {
-  int length = 0;
-  int index = 0;
-
-  // find the first letter of the word at the end
-  for (int i = s.length() - 1; i > 0; i--) {
-    if (!isalpha(s[i])) {
-      continue;
-    }
-
-    index = i;
-    break;
-  }
-
-  while (isalpha(s[index])) {
-    length++;
-    index--;
-
-    if (index < 0) {
+  for (int i = s.size() - 1; i >= 0; i--) {
+    if (s[i] != ' ') {
+      max++;
+    } else if (s[i] == ' ' && max > 0) {
       break;
     }
   }
 
-  return length;
+  return max;
 }
 
 int main() {
@@ -36,7 +22,7 @@ int main() {
   assert(lengthOfLastWord("   fly me   to   the moon  ") == 4);
   assert(lengthOfLastWord("luffy is still joyboy") == 6);
 
-  cout << "All tests passed." << endl;
+  std::cout << "All tests passed.\n";
 
   return 0;
 }
