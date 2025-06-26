@@ -1,3 +1,6 @@
 # usaco
 *.in
 *.out
+
+# stratch paper
+scratch.txt
